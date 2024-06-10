@@ -244,6 +244,12 @@ M.refresh = function(bufnr)
     if scope then
         scope_row_start, scope_col_start, scope_row_end, scope_col_end = scope:range()
         scope_row_start, scope_col_start, scope_row_end = scope_row_start + 1, scope_col_start + 1, scope_row_end + 1
+    else
+        for _, fn in
+            pairs(hooks.get(bufnr, hooks.type.SCOPE_NOT_FOUND) --[=[@as ibl.hooks.cb.scope_not_found[]]=])
+        do
+            fn(buffer_state.tick, bufnr)
+        end
     end
     local exact_scope_col_start = scope_col_start
 

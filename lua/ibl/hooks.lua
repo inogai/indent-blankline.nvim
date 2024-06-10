@@ -13,6 +13,7 @@ M.type = {
     SCOPE_HIGHLIGHT = "SCOPE_HIGHLIGHT",
     CLEAR = "CLEAR",
     HIGHLIGHT_SETUP = "HIGHLIGHT_SETUP",
+    SCOPE_NOT_FOUND = "SCOPE_NOT_FOUND",
 }
 
 ---@class ibl.hooks.options
@@ -30,6 +31,7 @@ local hooks = {
     [M.type.SCOPE_HIGHLIGHT] = {},
     [M.type.CLEAR] = {},
     [M.type.HIGHLIGHT_SETUP] = {},
+    [M.type.SCOPE_NOT_FOUND] = {},
     buffer_scoped = {},
 }
 local count = 0
@@ -42,6 +44,7 @@ local count = 0
 ---@alias ibl.hooks.cb.scope_highlight fun(tick: number, bufnr: number, scope: TSNode, scope_index: number): number
 ---@alias ibl.hooks.cb.clear fun(bufnr: number)
 ---@alias ibl.hooks.cb.highlight_setup fun()
+---@alias ibl.hooks.cb.scope_not_found fun(tick:number, bufnr: number)
 
 --- Registers a hook
 ---
@@ -57,6 +60,7 @@ local count = 0
 ---@overload fun(type: 'SCOPE_HIGHLIGHT', cb: ibl.hooks.cb.scope_highlight, opts: ibl.hooks.options?): string
 ---@overload fun(type: 'CLEAR', cb: ibl.hooks.cb.clear, opts: ibl.hooks.options?): string
 ---@overload fun(type: 'HIGHLIGHT_SETUP', cb: ibl.hooks.cb.highlight_setup, opts: ibl.hooks.options?): string
+---@overload fun(type: 'SCOPE_NOT_FOUND', cb: ibl.hooks.cb.scope_not_found, opts: ibl.hooks.options?): string
 M.register = function(type, cb, opts)
     vim.validate {
         type = {
@@ -91,6 +95,7 @@ M.register = function(type, cb, opts)
                 [M.type.SCOPE_HIGHLIGHT] = {},
                 [M.type.CLEAR] = {},
                 [M.type.HIGHLIGHT_SETUP] = {},
+                [M.type.SCOPE_NOT_FOUND] = {},
             }
         end
         hooks.buffer_scoped[bufnr][type][hook_id] = cb
@@ -125,6 +130,7 @@ M.clear_all = function()
         [M.type.SCOPE_HIGHLIGHT] = {},
         [M.type.CLEAR] = {},
         [M.type.HIGHLIGHT_SETUP] = {},
+        [M.type.SCOPE_NOT_FOUND] = {},
         buffer_scoped = {},
     }
 end
@@ -141,6 +147,7 @@ end
 ---@overload fun(bufnr: number, type: 'SCOPE_HIGHLIGHT'): ibl.hooks.cb.scope_highlight[]
 ---@overload fun(bufnr: number, type: 'CLEAR'): ibl.hooks.cb.clear[]
 ---@overload fun(bufnr: number, type: 'HIGHLIGHT_SETUP'): ibl.hooks.cb.highlight_setup[]
+---@overload fun(bufnr: number, type: 'SCOPE_NOT_FOUND'): ibl.hooks.cb.scope_not_found[]
 M.get = function(bufnr, type)
     local bufnr_str = tostring(bufnr)
     local list = {}
